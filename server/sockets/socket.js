@@ -26,15 +26,17 @@ io.on('connection', (client) => {
         callback(users.getPersonsOnRoom(data.room));
     })
 
-    client.on('createMessage', (data)=>{
+    client.on('createMessage', (data, callback)=>{
         let person = users.getPerson(client.id)
         let msg = createMessage(person.name, data.msg)
         client.broadcast.to(person.room).emit('createMessage', msg)
+        client.broadcast.to(person.room).emit('createMessage', createMessage('Administrator', `${person.name} se unió`));
+        callback(msg)
     })
 
     client.on('disconnect', ()=>{
         let personDeleted = users.deletePerson( client.id );
-        //console.log("Disconnect person deleted", personDeleted)
+        console.log("Disconnect person deleted", personDeleted)
 
         client.broadcast.to(personDeleted.room).emit('createMessage', createMessage('Administrator', `${personDeleted.name} salió`));
         client.broadcast.to(personDeleted.room).emit('personsList', users.getPersonsOnRoom(personDeleted.room));

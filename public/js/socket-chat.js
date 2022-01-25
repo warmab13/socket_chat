@@ -1,3 +1,4 @@
+
 var socket = io();
 
 var params = new URLSearchParams( window.location.search );
@@ -17,7 +18,8 @@ socket.on('connect', function() {
     
     socket.emit('enterChat', user, function(resp){
 
-        console.log("Usuarios conectados", resp)
+        //console.log("Usuarios conectados", resp)
+        renderUsers(resp)
     })
 });
 
@@ -30,23 +32,25 @@ socket.on('disconnect', function() {
 
 
 // Enviar información
-socket.emit('createMessage', {
+/*socket.emit('createMessage', {
     usuario: 'Fernando',
     mensaje: 'Hola Mundo'
 }, function(resp) {
     console.log('respuesta server: ', resp);
-});
+});*/
 
 // Escuchar información
 socket.on('createMessage', function(msg) {
 
     console.log('Servidor:', msg);
-
+    renderMessages(msg, false);
+    scrollBottom();
 });
 
 //Listen when user enters or leave the chat
 socket.on('personsList', function(persons){
-    console.log("Persons List ", persons)
+    console.log("Persons List ", persons);
+    renderUsers(persons);
 })
 
 //Mensajes Privados
